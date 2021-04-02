@@ -47,6 +47,9 @@ OVERRIDE_TARGET_FLATTEN_APEX := true
 # Shipping API Level
 PRODUCT_SHIPPING_API_LEVEL := 29
 
+# Kernel
+PRODUCT_SET_DEBUGFS_RESTRICTIONS := true
+
 # Adaptive Suspend
 PRODUCT_PROPERTY_OVERRIDES += \
     suspend.short_suspend_threshold_millis=2000 \
