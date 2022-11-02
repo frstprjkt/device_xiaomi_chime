@@ -39,6 +39,7 @@ persist.demo.hdmirotationlock=false
 
 # Fingerprint
 ro.hardware.fp.sideCap=true
+sys.fp.miui.token=0
 
 # FUSE Passthrough
 persist.sys.fuse.passthrough.enable=true
