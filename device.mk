@@ -33,6 +33,12 @@ PRODUCT_PACKAGES += \
     SystemUIOverlayChime \
     TelephonyOverlayChime
 
+PRODUCT_PACKAGES += \
+    CitrusAboutOverlay \
+    LemonAboutOverlay \
+    LimeAboutOverlay \
+    PomeloAboutOverlay
+
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH) \
@@ -422,13 +428,6 @@ PRODUCT_PACKAGES += \
 # Partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 PRODUCT_BUILD_SUPER_PARTITION := false
-
-# Overlays
-PRODUCT_PACKAGES += \
-    FrameworksResOverlayChime \
-    SettingsOverlayChime \
-    SystemUIOverlayChime \
-    TelephonyOverlayChime
 
 # Perf
 PRODUCT_PACKAGES += \
