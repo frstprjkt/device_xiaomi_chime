@@ -64,6 +64,10 @@ BOARD_HAVE_QCOM_FM := true
 BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := default
 LOC_HIDL_VERSION := 4.0
 
+# HALs
+OVERRIDE_QCOM_HARDWARE_VARIANT := bengal
+TARGET_HALS_PATH ?= hardware/qcom-caf/$(OVERRIDE_QCOM_HARDWARE_VARIANT)
+
 # HIDL
 DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/configs/hidl/manifest.xml
 DEVICE_MATRIX_FILE := $(DEVICE_PATH)/configs/hidl/compatibility_matrix.xml
