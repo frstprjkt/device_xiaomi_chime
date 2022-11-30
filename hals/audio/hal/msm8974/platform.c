@@ -402,6 +402,17 @@ struct  spkr_device_chmap {
     char chmap[AUDIO_CHANNEL_COUNT_MAX];
 };
 
+#ifdef SOFT_VOLUME
+static int usecase_volume_params[AUDIO_USECASE_MAX][3] = {
+    [USECASE_AUDIO_PLAYBACK_DEEP_BUFFER] = {-1,-1,-1},
+    [USECASE_AUDIO_PLAYBACK_MEDIA] = {-1,-1,-1},
+    [USECASE_AUDIO_PLAYBACK_SYS_NOTIFICATION] = {-1,-1,-1},
+    [USECASE_AUDIO_PLAYBACK_NAV_GUIDANCE] = {-1,-1,-1},
+    [USECASE_AUDIO_PLAYBACK_FRONT_PASSENGER] = {-1,-1,-1},
+    [USECASE_AUDIO_PLAYBACK_REAR_SEAT] = {-1,-1,-1},
+};
+#endif
+
 static int pcm_device_table[AUDIO_USECASE_MAX][2] = {
     [USECASE_AUDIO_PLAYBACK_DEEP_BUFFER] = {DEEP_BUFFER_PCM_DEVICE,
                                             DEEP_BUFFER_PCM_DEVICE},
@@ -531,6 +542,8 @@ static int pcm_device_table[AUDIO_USECASE_MAX][2] = {
                                              NAV_GUIDANCE_PCM_DEVICE},
     [USECASE_AUDIO_PLAYBACK_PHONE] = {PHONE_PCM_DEVICE,
                                       PHONE_PCM_DEVICE},
+    [USECASE_AUDIO_PLAYBACK_ALERTS] = {ALERTS_PCM_DEVICE,
+                                      ALERTS_PCM_DEVICE},
     [USECASE_AUDIO_PLAYBACK_FRONT_PASSENGER] = {FRONT_PASSENGER_PCM_DEVICE,
                                                 FRONT_PASSENGER_PCM_DEVICE},
     [USECASE_AUDIO_PLAYBACK_REAR_SEAT] = {REAR_SEAT_PCM_DEVICE,
@@ -650,6 +663,7 @@ static const char * const device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_OUT_BUS_SYS] = "bus-speaker",
     [SND_DEVICE_OUT_BUS_NAV] = "bus-speaker",
     [SND_DEVICE_OUT_BUS_PHN] = "bus-speaker",
+    [SND_DEVICE_OUT_BUS_ALR] = "bus-speaker",
     [SND_DEVICE_OUT_BUS_PAX] = "bus-speaker",
     [SND_DEVICE_OUT_BUS_RSE] = "bus-speaker",
     [SND_DEVICE_OUT_CALL_PROXY] = "call-proxy",
@@ -968,6 +982,7 @@ static int acdb_device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_OUT_BUS_SYS] = 60,
     [SND_DEVICE_OUT_BUS_NAV] = 14,
     [SND_DEVICE_OUT_BUS_PHN] = 94,
+    [SND_DEVICE_OUT_BUS_ALR] = 60,
     [SND_DEVICE_OUT_BUS_PAX] = 60,
     [SND_DEVICE_OUT_BUS_RSE] = 60,
     [SND_DEVICE_OUT_CALL_PROXY] = 32,
@@ -1227,6 +1242,7 @@ static struct name_to_index snd_device_name_index[SND_DEVICE_MAX] = {
     {TO_NAME_INDEX(SND_DEVICE_OUT_BUS_SYS)},
     {TO_NAME_INDEX(SND_DEVICE_OUT_BUS_NAV)},
     {TO_NAME_INDEX(SND_DEVICE_OUT_BUS_PHN)},
+    {TO_NAME_INDEX(SND_DEVICE_OUT_BUS_ALR)},
     {TO_NAME_INDEX(SND_DEVICE_OUT_BUS_PAX)},
     {TO_NAME_INDEX(SND_DEVICE_OUT_BUS_RSE)},
     {TO_NAME_INDEX(SND_DEVICE_OUT_CALL_PROXY)},
@@ -1466,6 +1482,7 @@ static struct name_to_index usecase_name_index[AUDIO_USECASE_MAX] = {
     {TO_NAME_INDEX(USECASE_AUDIO_PLAYBACK_SYS_NOTIFICATION)},
     {TO_NAME_INDEX(USECASE_AUDIO_PLAYBACK_NAV_GUIDANCE)},
     {TO_NAME_INDEX(USECASE_AUDIO_PLAYBACK_PHONE)},
+    {TO_NAME_INDEX(USECASE_AUDIO_PLAYBACK_ALERTS)},
     {TO_NAME_INDEX(USECASE_AUDIO_PLAYBACK_FRONT_PASSENGER)},
     {TO_NAME_INDEX(USECASE_AUDIO_PLAYBACK_REAR_SEAT)},
     {TO_NAME_INDEX(USECASE_AUDIO_RECORD_VOIP_LOW_LATENCY)},
@@ -2574,6 +2591,7 @@ static void set_platform_defaults(struct platform_data * my_data)
     hw_interface_table[SND_DEVICE_OUT_BUS_SYS] = strdup("TERT_TDM_RX_0");
     hw_interface_table[SND_DEVICE_OUT_BUS_NAV] = strdup("TERT_TDM_RX_1");
     hw_interface_table[SND_DEVICE_OUT_BUS_PHN] = strdup("TERT_TDM_RX_2");
+    hw_interface_table[SND_DEVICE_OUT_BUS_ALR] = strdup("TERT_TDM_RX_0");
     hw_interface_table[SND_DEVICE_OUT_BUS_PAX] = strdup("QUAT_TDM_RX_0");
     hw_interface_table[SND_DEVICE_OUT_BUS_RSE] = strdup("QUIN_TDM_RX_0");
     hw_interface_table[SND_DEVICE_OUT_CALL_PROXY] = strdup("CALL_PROXY_RX");
@@ -7018,6 +7036,7 @@ snd_device_t platform_get_output_snd_device(void *platform, struct stream_out *o
         ALOGE("%s: Unknown device(s) %#x", __func__, get_device_types(&devices));
     }
 exit:
+    clear_devices(&devices);
     ALOGV("%s: exit: snd_device(%s)", __func__, device_table[snd_device]);
     return snd_device;
 }
@@ -7881,6 +7900,7 @@ snd_device_t platform_get_input_snd_device(void *platform,
         }
     }
 exit:
+    clear_devices(&in_devices);
     ALOGV("%s: exit: in_snd_device(%s)", __func__, device_table[snd_device]);
     return snd_device;
 }
@@ -9231,6 +9251,7 @@ int64_t platform_render_latency(struct stream_out *out)
         case USECASE_AUDIO_PLAYBACK_SYS_NOTIFICATION:
         case USECASE_AUDIO_PLAYBACK_FRONT_PASSENGER:
         case USECASE_AUDIO_PLAYBACK_PHONE:
+        case USECASE_AUDIO_PLAYBACK_ALERTS:
             delay = LOW_LATENCY_PLATFORM_DELAY;
             break;
         case USECASE_AUDIO_PLAYBACK_OFFLOAD:
@@ -12062,7 +12083,9 @@ int platform_spkr_prot_is_wsa_analog_mode(void *adev __unused)
    if ((!strcmp(snd_card_name, "msm8953-snd-card-mtp")) ||
        (!strcmp(snd_card_name, "msm8953-sku4-snd-card")) ||
        (!strcmp(snd_card_name, "sdm439-sku1-snd-card")) ||
-       (!strcmp(snd_card_name, "sdm439-snd-card-mtp")))
+       (!strcmp(snd_card_name, "sdm439-snd-card-mtp")) ||
+       (!strcmp(snd_card_name, "bengal-qrd-snd-card")) ||
+       (!strcmp(snd_card_name, "bengal-scubaqrd-snd-card")))
        return 1;
    else
        return 0;
@@ -12707,6 +12730,48 @@ bool platform_set_microphone_map(void *platform, snd_device_t in_snd_device,
     my_data->mic_map[in_snd_device].microphones[m_count] = *info;
     return true;
 }
+
+#ifdef SOFT_VOLUME
+int platform_get_soft_step_volume_params(struct soft_step_volume_params *volume_params, int uc_id)
+{
+    int ret = 0;
+
+    if (volume_params == NULL) {
+        ALOGE("%s: Invalid volume_params", __func__);
+        ret = -EINVAL;
+        goto done;
+    }
+
+    if ((usecase_volume_params[uc_id][0] < 0) || (usecase_volume_params[uc_id][1] < 0) || (usecase_volume_params[uc_id][2] < 0) ) {
+        ALOGE("%s: soft step volume params values are not set dynamically,will use default static values set through cal data",__func__);
+        ret = -EINVAL;
+    } else {
+        memcpy(volume_params,usecase_volume_params[uc_id],sizeof(struct soft_step_volume_params));
+        ALOGV("%s: usecase-id = %d, ramp period = %d, ramp step = %d, ramp curve = %d",
+           __func__, uc_id, volume_params->period, volume_params->step, volume_params->curve);
+    }
+done:
+    return ret;
+}
+
+int platform_set_soft_step_volume_params(int uc_id, int period, int step, int curve)
+{
+    int ret = 0;
+
+    ALOGV("%s: usecase-id = %d, ramp period = %d, ramp step = %d, ramp curve = %d",
+           __func__, uc_id, period, step, curve);
+    if ((uc_id < 0) || (uc_id >= AUDIO_USECASE_MAX)) {
+        ALOGE("%s : invalid usecase id", __func__);
+	    ret = -EINVAL;
+    }
+
+    usecase_volume_params[uc_id][0] = period;
+    usecase_volume_params[uc_id][1] = step;
+    usecase_volume_params[uc_id][2] = curve;
+
+    return ret;
+}
+#endif
 
 int platform_get_active_microphones(void *platform, unsigned int channels,
                                     audio_usecase_t uc_id,
