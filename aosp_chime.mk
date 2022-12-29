@@ -11,20 +11,23 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 # Inherit from chime device
 $(call inherit-product, device/xiaomi/chime/device.mk)
 
-# Inherit some common xdroidOSS stuff.
-$(call inherit-product, vendor/xdroid/config/common.mk)
+# Inherit some common Aosp stuff.
+$(call inherit-product, vendor/aosp/config/common.mk)
 
-# xdroidOSS Maintainer name
-XDROID_MAINTAINER := frostg012
+#  AOSP Maintainer name
+ AOSP_MAINTAINER := Manish Shrestha
 
-# xdroidOSS Bootanimation
-XDROID_BOOT := 720
+# AOSP Bootanimation
+ AOSP_BOOT := 720
+
+# Quick Tap
+ TARGET_SUPPORTS_QUICK_TAP := true
 
 # Device identifier. This must come after all inclusions.
-PRODUCT_NAME := xdroid_chime
+PRODUCT_NAME := aosp_chime
 PRODUCT_DEVICE := chime
 PRODUCT_BRAND := Xiaomi
-PRODUCT_MODEL := SM6115
+PRODUCT_MODEL :=  Redmi 9T
 PRODUCT_MANUFACTURER := Xiaomi
 
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
