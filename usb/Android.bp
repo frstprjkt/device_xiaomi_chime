@@ -50,9 +50,3 @@ cc_binary {
     init_rc: ["android.hardware.usb.gadget@1.1-service-chime.rc"],
     vintf_fragments: ["android.hardware.usb.gadget@1.1-service-chime.xml"],
 }
-
-prebuilt_etc {
-    name: "usb_compositions.conf",
-    src: "usb_compositions.conf",
-    vendor: true,
-}
