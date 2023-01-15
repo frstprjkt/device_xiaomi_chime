@@ -166,6 +166,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     memtrack.bengal \
     gralloc.bengal \
+    libdisplayconfig.qti \
+    libdisplayconfig.system.qti \
     libqdMetaData \
     libqdMetaData.system \
     libsdmcore \
