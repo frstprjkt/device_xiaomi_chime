@@ -33,6 +33,9 @@ PRODUCT_PACKAGES += \
     SystemUIOverlayChime \
     TelephonyOverlayChime
 
+DEVICE_PACKAGE_OVERLAYS += \
+    $(LOCAL_PATH)/overlay
+
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH) \
