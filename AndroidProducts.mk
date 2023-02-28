@@ -5,9 +5,9 @@
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/xdroid_chime.mk
+    $(LOCAL_DIR)/nad_chime.mk
 
 COMMON_LUNCH_CHOICES := \
-    xdroid_chime-user \
-    xdroid_chime-userdebug \
-    xdroid_chime-eng
+    nad_chime-user \
+    nad_chime-userdebug \
+    nad_chime-eng

@@ -11,17 +11,14 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 # Inherit from chime device
 $(call inherit-product, device/xiaomi/chime/device.mk)
 
-# Inherit some common xdroidOSS stuff.
-$(call inherit-product, vendor/xdroid/config/common.mk)
-
-# xdroidOSS Maintainer name
-XDROID_MAINTAINER := frostg012
-
-# xdroidOSS Bootanimation
-XDROID_BOOT := 720
+# Inherit some common NusantaraProject stuff.
+$(call inherit-product, vendor/nusantara/config/common_full_phone.mk)
+NAD_BUILD_TYPE := OFFICIAL
+USE_PIXEL_CHARGING := true
+USE_GAPPS := true
 
 # Device identifier. This must come after all inclusions.
-PRODUCT_NAME := xdroid_chime
+PRODUCT_NAME := nad_chime
 PRODUCT_DEVICE := chime
 PRODUCT_BRAND := Xiaomi
 PRODUCT_MODEL := SM6115
