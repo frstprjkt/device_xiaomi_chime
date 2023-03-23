@@ -14,8 +14,8 @@ TARGET_OTA_ASSERT_DEVICE := lime,lemon,pomelo,chime,juice
 
 # Kernel - Prebuilt images
 #BOARD_KERNEL_SEPARATED_DTBO := true
-BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/images/dtbo.img
-TARGET_PREBUILT_DTB := $(DEVICE_PATH)/images/dtb.img
+BOARD_PREBUILT_DTBOIMAGE := $(COMMON_PATH)/lime/dtbo.img
+TARGET_PREBUILT_DTB := $(COMMON_PATH)/lime/dtb.img
 BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
 
 # NFC
