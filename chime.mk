@@ -26,6 +26,10 @@ PRODUCT_SOONG_NAMESPACES += \
 # Flatten APEXs for performance
 OVERRIDE_TARGET_FLATTEN_APEX := true
 
+# Platform
+PRODUCT_USES_QCOM_HARDWARE := true
+PRODUCT_BOARD_PLATFORM := bengal
+
 # Product Shipping API
 PRODUCT_SHIPPING_API_LEVEL := 29
 
