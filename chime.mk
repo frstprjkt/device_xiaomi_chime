@@ -443,6 +443,16 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     libpiex_shim
 
+# StatiX-specific flags
+# Disable Quick Tap
+DISABLE_COLUMBUS := true
+# Enable blurs
+#TARGET_USES_BLUR := true
+# Enable gameservice
+ENABLE_GAMETOOLS := true
+# Google Pixel Launcher
+INCLUDE_PIXEL_LAUNCHER := true
+
 # Telephony
 PRODUCT_PACKAGES += \
     ims-ext-common \
