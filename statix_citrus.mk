@@ -11,6 +11,9 @@ $(call inherit-product, device/xiaomi/chime/device-citrus.mk)
 $(call inherit-product, vendor/statix/config/common.mk)
 $(call inherit-product, vendor/statix/config/gsm.mk)
 
+# Bootanimation
+scr_resolution := 1080
+
 # Device identifier. This must come after all inclusions.
 PRODUCT_NAME := statix_citrus
 PRODUCT_DEVICE := citrus
